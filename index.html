@@ -108,13 +108,13 @@ function pw(v){const s=[v.length>=6,v.length>=10,/[A-Z]/.test(v)&&/[a-z]/.test(v
 async function doAuth(){const e=$e('ae').value.trim().toLowerCase(),p=$e('ap').value,U=users();if(!/^\S+@\S+\.\S+$/.test(e))return aerr('Enter a valid email address');
  if(AM=='up'){const n=$e('an').value.trim();if(!n)return aerr('Please enter your name');if(p.length<6)return aerr('Password must be at least 6 characters');if(p!=$e('ap2').value)return aerr('Passwords do not match');if(U[e])return aerr('Account already exists – please log in');U[e]={name:n,h:await hx(p)};setUsers(U);enter({name:n,email:e,via:'Email'})}
  else{if(!U[e]||U[e].h!=await hx(p))return aerr('Wrong email or password (or no account yet – sign up)');enter({name:U[e].name,email:e,via:'Email'})}}
-const enter=u=>{S.user=u;S.v='home';draw();toast('Welcome, '+u.name+' 👋')},logout=()=>{S.user=null;AM='in';draw()};
+const enter=u=>{S.user=u;S.v='home';draw();toast('Welcome, '+u.name+' 👋')},logout=()=>{try{window.firebase&&firebase.auth&&firebase.auth().signOut()}catch(e){}S.user=null;AM='in';draw()}
 const ld=u=>new Promise((ok,no)=>{const s=document.createElement('script');s.src=u;s.onload=ok;s.onerror=()=>no(new Error('Could not load Firebase'));document.head.appendChild(s)});
 let FBR=null;const fbLoad=()=>FBR||(FBR=ld('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js').then(()=>ld('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js')).then(()=>{if(!firebase.apps.length)firebase.initializeApp(FB)}));
 if(FB)fbLoad().catch(()=>{FBR=null});
 async function social(p){try{if(!FB){enter({name:p+' Demo User',email:p.toLowerCase()+'@demo.local',via:p+' (demo)'});toast(p+' login runs in demo mode until Firebase keys are added',0);return}
  if(!window.firebase||!firebase.auth||!firebase.apps.length)await fbLoad();
- const pr=p=='Google'?new firebase.auth.GoogleAuthProvider():new firebase.auth.GithubAuthProvider(),r=(await firebase.auth().signInWithPopup(pr)).user;enter({name:r.displayName||r.email,email:r.email||'',via:p})}catch(e){aerr(e.message)}}
+ const pr=p=='Google'?new firebase.auth.GoogleAuthProvider():new firebase.auth.GithubAuthProvider();if(p=='Google')pr.setCustomParameters({prompt:'select_account'});const r=(await firebase.auth().signInWithPopup(pr)).user;enter({name:r.displayName||r.email,email:r.email||'',via:p})}catch(e){aerr(e.code=='auth/account-exists-with-different-credential'?'This email is already registered with another login method (for example Google). Please log in with that one.':e.code=='auth/popup-closed-by-user'?'The login window was closed.':e.message)}}
 function gsearch(q){q=q.trim().toLowerCase();const r=$e('gr');if(!q){r.style.display='none';return}const o=[];
  S.T.forEach(t=>{if([rg(t),t.name,t.des,'level '+t.level,...t.subs].join(' ').toLowerCase().includes(q))o.push(['👩‍🏫',rg(t)+' · '+t.name,t.subs.join(', ')+' · '+t.des,`pickT(${t.id})`])});
  for(let g=1;g<=12;g++)for(let s=0;s<S.secs[g];s++)if(`grade ${g}${LET(s)} class ${g}${LET(s)} section ${LET(s)} ${cc_(g,s)} level ${L(g)}`.toLowerCase().includes(q))o.push(['🏫','Grade '+g+LET(s),cc_(g,s),`pickC('${g}-${s}')`]);

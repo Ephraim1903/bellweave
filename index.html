@@ -1,0 +1,236 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>BellWeave – School Timetable Manager</title>
+<style>
+:root{--bg:#eef7f0;--card:#fff;--tx:#14231a;--mu:#5b6f62;--bd:#cfe3d5;--ac:#16a34a;--ak:#fff;--ok:#15803d;--er:#b91c1c;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0e1712;--card:#16221b;--tx:#e6f2ea;--mu:#9bb5a4;--bd:#27402f;--ac:#4ade80;--ak:#052e16;--ok:#4ade80;--er:#f87171}}
+:root[data-theme=dark]{--bg:#0e1712;--card:#16221b;--tx:#e6f2ea;--mu:#9bb5a4;--bd:#27402f;--ac:#4ade80;--ak:#052e16;--ok:#4ade80;--er:#f87171}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;background:var(--bg) radial-gradient(circle at 8% 0,#16a34a26,transparent 38%),radial-gradient(circle at 95% 100%,#22c55e22,transparent 40%);color:var(--tx);font:14px system-ui,-apple-system,Segoe UI,sans-serif}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:12px 18px;background:var(--card);border-bottom:1px solid var(--bd)}
+h1{margin:0;font-size:20px;letter-spacing:.5px}h1 span{color:var(--ac)}small{color:var(--mu)}
+nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+button,select,input,textarea{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:7px 10px}
+button{cursor:pointer}button.p{background:var(--ac);color:var(--ak);border-color:var(--ac)}nav button.on{background:var(--ac);color:var(--ak)}
+main{padding:16px;max-width:1200px;margin:auto}.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:14px}
+h2{margin:0 0 10px;font-size:16px}.row{display:flex;flex-wrap:wrap;gap:10px;align-items:end}label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--mu)}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}textarea{width:100%;min-height:150px}
+.sc{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{border:1px solid var(--bd);padding:6px 8px;text-align:center;font-size:12px}th{background:var(--bg)}td.l{text-align:left}
+.td{color:#111;min-width:78px}.td b{display:block}.td i{font-size:10px;font-style:normal;opacity:.75}
+.w{color:var(--er);margin:3px 0}.ok{color:var(--ok)}.bar{height:8px;background:var(--bd);border-radius:5px;min-width:70px}.bar div{height:8px;border-radius:5px;background:var(--ac)}
+.lv{display:inline-block;padding:1px 7px;border-radius:9px;background:var(--bd);font-size:11px}
+@media print{header,.noprint{display:none}body{background:#fff}.card{border:0}}
+button,.btn{transition:transform .15s,filter .15s}button:hover,.btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn{cursor:pointer;border:1px solid var(--ac);border-radius:8px;padding:7px 12px;background:var(--card);display:inline-block;color:var(--tx);font-size:14px;margin-right:8px}
+main>*{animation:fi .3s}@keyframes fi{from{opacity:0;transform:translateY(8px)}}
+.td{cursor:pointer;transition:transform .15s,box-shadow .15s}.td:hover{transform:scale(1.07);box-shadow:0 4px 12px #0004;position:relative;z-index:1}
+header{background:var(--card)!important;border-bottom:1px solid var(--bd)!important;position:sticky;top:0;z-index:8}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.chip{background:var(--card);border:1px solid var(--ac);border-radius:20px;padding:4px 12px;font-weight:600}
+#ov{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;z-index:9}#ov .bx{background:var(--card);padding:22px;border-radius:14px;width:min(440px,90vw);text-align:center}
+#ov .bar{height:12px;margin:14px 0;overflow:hidden}#ov .bar div{height:12px;transition:width .2s;background:linear-gradient(90deg,var(--ac),#bbf7d0)}#ov p{color:var(--mu);margin:0}
+#toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,90px);background:var(--ac);color:var(--ak);padding:10px 18px;border-radius:10px;opacity:0;transition:.3s;z-index:10;font-weight:600}#toast.show{transform:translate(-50%,0);opacity:1}#toast.bad{background:var(--er);color:#fff}
+
+:root{--grid:#16a34a12}body{background-image:radial-gradient(circle at 8% 0,#16a34a26,transparent 38%),radial-gradient(circle at 95% 100%,#22c55e22,transparent 40%),linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:auto,auto,28px 28px,28px 28px;background-attachment:fixed}
+#app{display:flex;min-height:100vh}#mw{flex:1;min-width:0;display:flex;flex-direction:column}main{flex:1;width:100%}
+#side{width:220px;flex:none;background:linear-gradient(180deg,#14532d,#052e16);color:#fff;display:flex;flex-direction:column;padding:16px 12px;gap:18px;position:sticky;top:0;height:100vh}
+.brand{display:flex;gap:10px;align-items:center;color:#fff}.brand b{font-size:18px}.brand span{color:#86efac}.brand small{display:block;color:#a7f3d0}.sf{margin-top:auto;font-size:11px;color:#a7f3d0;line-height:1.6}
+#side nav{flex-direction:column;margin:0}#side nav button{background:transparent;border:0;color:#d1fae5;text-align:left;display:flex;gap:10px;padding:10px 12px;border-radius:8px}#side nav button:hover{background:#ffffff18}#side nav button.on{background:#ffffff24;color:#fff;box-shadow:inset 3px 0 #4ade80}
+#sb{position:relative;flex:1;max-width:480px;margin:0 auto}#gs{width:100%;border-radius:20px;padding-left:14px}#gr{display:none;position:absolute;top:110%;left:0;right:0;background:var(--card);border:1px solid var(--bd);border-radius:12px;box-shadow:0 10px 30px #0003;max-height:340px;overflow:auto;z-index:20}.sr{display:flex;gap:10px;padding:8px 12px;cursor:pointer;align-items:center}.sr:hover{background:var(--bg)}.sr small{display:block;color:var(--mu)}
+#um{display:flex;gap:10px;align-items:center}.av{width:34px;height:34px;border-radius:50%;background:var(--ac);color:var(--ak);display:grid;place-items:center;font-weight:700}
+footer{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;padding:14px 20px;border-top:1px solid var(--bd);background:var(--card);color:var(--mu);font-size:12px}footer a{color:var(--ac);cursor:pointer;margin:0 8px}
+.kp{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}.k{background:var(--card);border:1px solid var(--bd);border-left:4px solid var(--ac);border-radius:12px;padding:14px;transition:.2s}.k:hover{transform:translateY(-3px);box-shadow:0 8px 20px #0002}.k b{font-size:26px;display:block}.k span{color:var(--mu)}
+.hero{background:linear-gradient(120deg,var(--card),#16a34a28)}.st{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd)}
+body.lock #side,body.lock #hd,body.lock footer{display:none}body.lock main{max-width:none;padding:0}
+.auth{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr}.ah{background:linear-gradient(135deg,#14532d,#16a34a,#065f46);background-size:300% 300%;animation:gs 12s ease infinite;color:#fff;padding:48px;display:flex;flex-direction:column;justify-content:center;gap:18px;position:relative;overflow:hidden}.ah h1{margin:0}@keyframes gs{50%{background-position:100% 50%}}
+.fl{position:absolute;font-size:48px;opacity:.15;animation:fl 9s ease-in-out infinite}@keyframes fl{50%{transform:translateY(-30px) rotate(12deg)}}
+.af{display:flex;align-items:center;justify-content:center;padding:24px}.acd{width:min(400px,100%);background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:24px;box-shadow:0 10px 40px #0002;animation:fi .4s}.acd input[type=text],.acd input[type=email],.acd input[type=password]{width:100%}.acd label{margin-bottom:10px}
+.tabs{display:flex;background:var(--bg);border-radius:10px;padding:4px;margin-bottom:16px}.tabs button{flex:1;border:0;background:transparent}.tabs button.on{background:var(--ac);color:var(--ak)}
+.sb{width:100%;margin:6px 0}.soc{display:grid;grid-template-columns:1fr 1fr;gap:8px}.soc button{display:flex;gap:8px;justify-content:center;align-items:center}#aerr{color:var(--er);min-height:18px;margin:4px 0}.shake{animation:sk .3s}@keyframes sk{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}.pm{height:5px;border-radius:3px;background:var(--bd)}.pm div{height:5px;border-radius:3px;transition:.3s}
+@media(max-width:800px){.auth{grid-template-columns:1fr}.ah{padding:24px}#app{flex-direction:column}#side{width:auto;height:auto;position:static;flex-direction:row;flex-wrap:wrap;align-items:center}#side nav{flex-direction:row;flex-wrap:wrap}.sf{display:none}#hd{flex-wrap:wrap}}
+@media print{#side,footer,#sb,#um{display:none}}
+
+:root{--card:#ffffffc7;--cs:#fff;--g1:#d1fae5;--g2:#a7f3d0;--g3:#bbf7d0;--g4:#6ee7b7}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--card:#0f2418d6;--cs:#14281d;--g1:#04231a;--g2:#064e3b;--g3:#052e16;--g4:#0b3d2a}}
+:root[data-theme=dark]{--card:#0f2418d6;--cs:#14281d;--g1:#04231a;--g2:#064e3b;--g3:#052e16;--g4:#0b3d2a}
+body{background:linear-gradient(135deg,var(--g1),var(--g2),var(--g3),var(--g4));background-size:300% 300%;animation:gs 14s ease infinite;background-attachment:fixed}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:28px 28px}
+#app{position:relative}.card,.k,header,footer{backdrop-filter:blur(6px)}#gr,.acd,#ov .bx{background:var(--cs)}
+.k{cursor:pointer}.k.on{border-color:var(--ac);box-shadow:0 6px 18px #16a34a44;background:var(--cs)}
+.hv{cursor:pointer;transition:.2s}.hv:hover{transform:translateY(-4px);box-shadow:0 10px 24px #16a34a40;border-color:var(--ac)}
+</style></head><body>
+<div id="ov"><div class="bx"><h3 id="ovt">Working…</h3><div class="bar"><div id="ovb" style="width:0"></div></div><p id="ovs"></p></div></div><div id="toast"></div>
+<div id="app"><aside id="side"><div class="brand"><span id="lgs"></span><div><b>Bell<span>Weave</span></b><small>School Timetable ERP</small></div></div><nav id="nav"></nav><div class="sf">BellWeave ERP<br>Plan smarter, teach better.</div></aside>
+<div id="mw"><header id="hd"><h2 id="pt" style="margin:0"></h2><div id="sb"><input id="gs" placeholder="🔍 Search teacher, reg no, class, section, subject…" oninput="gsearch(this.value)" onfocus="gsearch(this.value)"><div id="gr"></div></div><div id="um"></div></header>
+<main id="m"></main>
+<footer><div style="display:flex;gap:8px;align-items:center"><span id="lgf"></span><b>BellWeave</b> · School Timetable ERP</div><div><a onclick="go('home')">Dashboard</a>·<a onclick="go('setup')">Setup</a>·<a onclick="go('teach')">Teachers</a>·<a onclick="go('tt')">Timetable</a></div><div>© 2026 BellWeave · v1.1</div></footer></div></div>
+<script>
+const L=g=>g<=5?1:g<=10?2:3,LN={1:'Primary (Grades 1–5)',2:'Middle & Secondary (6–10)',3:'Senior Secondary (11–12)'};
+const DS={'HOD':4,'Senior Teacher':3,'Teacher':2,'Junior Teacher':1},DM={'HOD':24,'Senior Teacher':28,'Teacher':30,'Junior Teacher':30};
+const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat'],LET=i=>String.fromCharCode(65+i);
+let S={days:5,per:8,lunch:4,secs:{},nid:1,T:[],tt:null,v:'home',fn:{},user:null,sel:'1-0',selT:0,
+subs:{1:'English:6\nTamil:5\nMaths:6\nEVS:5\nSocial:2\nComputer:2\nArt:2\nPE:2\nMoral:2',2:'English:6\nTamil:5\nMaths:7\nScience:6\nSocial:5\nComputer:2\nPE:2\nArt:1',3:'English:6\nMaths:7\nPhysics:6\nChemistry:6\nBiology:6\nComputer Sci:5\nPE:1'}};
+for(let g=1;g<=12;g++)S.secs[g]=6;
+try{const x=localStorage.getItem('bellweave');if(x)S=Object.assign(S,JSON.parse(x))}catch(e){}
+const save=()=>{try{localStorage.setItem('bellweave',JSON.stringify(S))}catch(e){}};
+const parse=l=>S.subs[l].split('\n').map(x=>x.split(':')).filter(x=>x[0].trim()).map(x=>({n:x[0].trim(),p:Math.max(1,+x[1]||1)}));
+const sc=t=>DS[t.des]*100+t.exp;
+const col=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))%360;return`hsl(${h} 65% 82%)`};
+const go=v=>{S.v=v;draw()};
+const LOGO='<svg viewBox="0 0 48 48" width="40" height="40"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#86efac"/><stop offset="1" stop-color="#15803d"/></linearGradient></defs><rect width="48" height="48" rx="13" fill="url(#lg)"/><path d="M24 8c-6 0-9 4.500-9 10v6l-3 5h24l-3-5v-6c0-5.500-3-10-9-10z" fill="#fff"/><circle cx="24" cy="38" r="3.200" fill="#fff"/><path d="M13 19c5 4 17 4 22 0M13 25c5 4 17 4 22 0" stroke="#16a34a" stroke-width="1.800" fill="none" stroke-linecap="round"/><path d="M19 12c3 3 7 3 10 0" stroke="#16a34a" stroke-width="1.500" fill="none" stroke-linecap="round"/></svg>';
+const GH='<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 00-3.800 23.400c.6.1.8-.3.8-.6v-2c-3.300.7-4-1.600-4-1.600-.5-1.400-1.300-1.800-1.300-1.800-1.100-.7.1-.7.1-.7 1.200.1 1.800 1.200 1.800 1.200 1.100 1.800 2.800 1.300 3.500 1 .1-.8.4-1.300.8-1.600-2.700-.3-5.500-1.300-5.500-5.900 0-1.300.5-2.400 1.200-3.200-.1-.3-.5-1.500.1-3.200 0 0 1-.3 3.300 1.200a11.500 11.500 0 016 0c2.300-1.500 3.300-1.200 3.300-1.200.7 1.700.2 2.900.1 3.200.8.8 1.200 1.900 1.200 3.200 0 4.600-2.800 5.600-5.500 5.900.4.400.8 1.100.8 2.200v3.300c0 .3.2.7.8.6A12 12 0 0012 .3"/></svg>';
+const GG='<b style="font:700 17px Arial;background:conic-gradient(#ea4335 0 25%,#fbbc05 0 50%,#34a853 0 75%,#4285f4 0);-webkit-background-clip:text;color:transparent">G</b>';
+const rg=t=>'BWT-'+String(t.id).padStart(4,'0'),cc_=(g,s)=>'G'+String(g).padStart(2,'0')+LET(s);
+const FB=null; /* paste your Firebase web config here, e.g. {apiKey:"..",authDomain:"..",projectId:"..",appId:".."} to enable real Google/GitHub login */
+let AM='in',CH='bar',CL=0;
+const hx=async s=>{try{return[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)))].map(b=>b.toString(16).padStart(2,'0')).join('')}catch(e){return btoa(unescape(encodeURIComponent(s)))}};
+const users=()=>{try{return JSON.parse(localStorage.getItem('bw_users')||'{}')}catch(e){return{}}},setUsers=u=>{try{localStorage.setItem('bw_users',JSON.stringify(u))}catch(e){}};
+function authHTML(){const up=AM=='up';
+ return`<div class="auth"><div class="ah"><span class="fl" style="left:8%;top:12%">🔔</span><span class="fl" style="left:70%;top:20%;animation-delay:2s">📅</span><span class="fl" style="left:20%;top:75%;animation-delay:4s">🎓</span><span class="fl" style="left:75%;top:70%;animation-delay:1s">📚</span>
+ <div class="brand">${LOGO}<div><b style="font-size:26px">Bell<span>Weave</span></b><small>School Timetable ERP</small></div></div>
+ <h1 style="font-size:30px;line-height:1.2">Weave every bell into the<br>perfect timetable.</h1><p>✔ Grades 1–12, all sections<br>✔ Teachers matched by subject, designation &amp; experience<br>✔ Clash-free in seconds, with workload charts</p></div>
+ <div class="af"><div class="acd"><div class="tabs"><button class="${up?'':'on'}" onclick="am('in')">Log in</button><button class="${up?'on':''}" onclick="am('up')">Sign up</button></div>
+ <h2>${up?'Create your account':'Welcome back'}</h2>
+ ${up?'<label>Full name<input id="an" autocomplete="name"></label>':''}
+ <label>Email<input id="ae" type="email" autocomplete="email" onkeydown="if(event.key==\'Enter\')doAuth()"></label>
+ <label>Password<input id="ap" type="password" oninput="pw(this.value)" onkeydown="if(event.key==\'Enter\')doAuth()"></label>
+ ${up?'<div class="pm"><div id="pmb" style="width:0"></div></div><label style="margin-top:10px">Confirm password<input id="ap2" type="password"></label>':''}
+ <label class="row" style="flex-direction:row;align-items:center;gap:6px"><input type="checkbox" onchange="ap.type=this.checked?\'text\':\'password\'" style="width:auto"> Show password</label>
+ <div id="aerr"></div><button class="p sb" onclick="doAuth()">${up?'Create account':'Log in'}</button>
+ <p style="text-align:center;color:var(--mu)">or continue with</p><div class="soc"><button onclick="social('Google')">${GG} Google</button><button onclick="social('GitHub')">${GH} GitHub</button></div>
+ <p style="text-align:center;margin-bottom:0"><small>${up?'Already registered?':'New to BellWeave?'} <a href="#" onclick="am('${up?'in':'up'}');return false" style="color:var(--ac)">${up?'Log in':'Create an account'}</a></small></p></div></div></div>`}
+const am=m=>{AM=m;draw()},aerr=m=>{const x=$e('aerr');x.textContent=m;x.classList.remove('shake');void x.offsetWidth;x.classList.add('shake')};
+function pw(v){const s=[v.length>=6,v.length>=10,/[A-Z]/.test(v)&&/[a-z]/.test(v),/\d/.test(v),/[^A-Za-z0-9]/.test(v)].filter(Boolean).length,b=$e('pmb');if(b){b.style.width=s*20+'%';b.style.background=['#dc2626','#dc2626','#f59e0b','#84cc16','#16a34a','#16a34a'][s]}}
+async function doAuth(){const e=$e('ae').value.trim().toLowerCase(),p=$e('ap').value,U=users();if(!/^\S+@\S+\.\S+$/.test(e))return aerr('Enter a valid email address');
+ if(AM=='up'){const n=$e('an').value.trim();if(!n)return aerr('Please enter your name');if(p.length<6)return aerr('Password must be at least 6 characters');if(p!=$e('ap2').value)return aerr('Passwords do not match');if(U[e])return aerr('Account already exists – please log in');U[e]={name:n,h:await hx(p)};setUsers(U);enter({name:n,email:e,via:'Email'})}
+ else{if(!U[e]||U[e].h!=await hx(p))return aerr('Wrong email or password (or no account yet – sign up)');enter({name:U[e].name,email:e,via:'Email'})}}
+const enter=u=>{S.user=u;S.v='home';draw();toast('Welcome, '+u.name+' 👋')},logout=()=>{S.user=null;AM='in';draw()};
+const ld=u=>new Promise((ok,no)=>{const s=document.createElement('script');s.src=u;s.onload=ok;s.onerror=()=>no(new Error('Could not load Firebase'));document.head.appendChild(s)});
+async function social(p){try{if(!FB){enter({name:p+' Demo User',email:p.toLowerCase()+'@demo.local',via:p+' (demo)'});toast(p+' login runs in demo mode until Firebase keys are added',0);return}
+ if(!window.firebase||!firebase.auth){await ld('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');await ld('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js')}
+ if(!firebase.apps.length)firebase.initializeApp(FB);const pr=p=='Google'?new firebase.auth.GoogleAuthProvider():new firebase.auth.GithubAuthProvider(),r=(await firebase.auth().signInWithPopup(pr)).user;enter({name:r.displayName||r.email,email:r.email||'',via:p})}catch(e){aerr(e.message)}}
+function gsearch(q){q=q.trim().toLowerCase();const r=$e('gr');if(!q){r.style.display='none';return}const o=[];
+ S.T.forEach(t=>{if([rg(t),t.name,t.des,'level '+t.level,...t.subs].join(' ').toLowerCase().includes(q))o.push(['👩‍🏫',rg(t)+' · '+t.name,t.subs.join(', ')+' · '+t.des,`pickT(${t.id})`])});
+ for(let g=1;g<=12;g++)for(let s=0;s<S.secs[g];s++)if(`grade ${g}${LET(s)} class ${g}${LET(s)} section ${LET(s)} ${cc_(g,s)} level ${L(g)}`.toLowerCase().includes(q))o.push(['🏫','Grade '+g+LET(s),cc_(g,s),`pickC('${g}-${s}')`]);
+ r.innerHTML=o.slice(0,14).map(x=>`<div class="sr" onclick="${x[3]};$e('gr').style.display='none'"><span>${x[0]}</span><div><b>${x[1]}</b><small>${x[2]}</small></div></div>`).join('')||'<div class="sr">No matches</div>';r.style.display='block'}
+function pickT(id){if(!S.tt){S.v='teach';draw();return toast('Generate the timetable to view this teacher’s schedule')}S.selT=id;S.v='tt';draw();$e('tc').scrollIntoView({behavior:'smooth'})}
+function pickC(k){if(!S.tt){S.v='tt';draw();return toast('Generate the timetable first')}S.sel=k;S.v='tt';draw();$e('cc').scrollIntoView({behavior:'smooth'})}
+document.addEventListener('click',e=>{if(!e.target.closest('#sb')){const r=$e('gr');if(r)r.style.display='none'}});
+function vHome(){const nT=S.T.length,nC=Object.values(S.secs).reduce((a,b)=>a+(+b||0),0),lv=l=>({t:S.T.filter(t=>t.level==l).length,c:Object.keys(S.secs).reduce((a,g)=>a+(L(+g)==l?+S.secs[g]||0:0),0),p:parse(l).reduce((a,b)=>a+b.p,0)});
+ const st=[['Set up sections & subjects',nC>0,'setup','Open'],['Add teachers (CSV or manual)',nT>0,'teach','Open'],['Generate the timetable',!!S.tt,'tt','Go']];
+ return`<div class="card hero"><h1>Welcome, ${S.user.name.split(' ')[0]} 👋</h1><p style="margin:4px 0 0;color:var(--mu)">Plan clash-free timetables for grades 1–12 in minutes.</p></div>
+ <div class="kp">${[['t',nT,'Teachers'],['c',nC,'Classes (sections)'],['p',S.days*S.per,'Periods / week / class'],['s',S.tt?(S.tt.bad?'⚠':'✔'):'—','Timetable status']].map(([k,v,n])=>`<div class="k ${S.dk==k?'on':''}" onclick="S.dk=S.dk=='${k}'?'':'${k}';draw()"><b>${v}</b><span>${n}</span></div>`).join('')}</div>${vDetail()}
+ <div class="g3">${[1,2,3].map(l=>{const x=lv(l);return`<div class="card hv" onclick="go('teach')" title="Open teachers"><h2>${['Primary','Secondary','Senior Secondary'][l-1]} <small>Grades ${['1–5','6–10','11–12'][l-1]}</small></h2><p>👩‍🏫 ${x.t} teachers · 🏫 ${x.c} classes</p><p>📚 ${x.p} periods/week per class</p><div class="bar"><div style="width:${x.t?100:0}%"></div></div></div>`}).join('')}</div>
+ <div class="card"><h2>Quick start</h2>${st.map(([n,d,k,b],i)=>`<div class="st"><i>${d?'✅':'⬜'}</i><span style="flex:1">${i+1}. ${n}</span><button class="${d?'':'p'}" onclick="go('${k}')">${b}</button></div>`).join('')}</div>`}
+function vDetail(){const k=S.dk;if(!k)return'<p class="noprint" style="color:var(--mu)">👆 Click a card above to see its details.</p>';let b='';
+ if(k=='t')b=S.T.length?`<div class="sc" style="max-height:340px;overflow:auto"><table><tr><th>Reg No</th><th>Name</th><th>Subjects</th><th>Designation</th><th>Exp</th></tr>${S.T.map(t=>`<tr><td><b>${rg(t)}</b></td><td class="l">${t.name}</td><td class="l">${t.subs.join(', ')}</td><td>${t.des}</td><td>${t.exp} yrs</td></tr>`).join('')}</table></div>`:'No teachers yet – add them in the Teachers tab.';
+ if(k=='c')b=Object.keys(S.secs).map(g=>`<div class="st"><b style="width:80px">Grade ${g}</b><span style="flex:1">${[...Array(+S.secs[g]||0)].map((_,s)=>`<span class="chip" style="margin:2px;display:inline-block">${g}${LET(s)} · ${cc_(g,s)}</span>`).join('')||'No sections'}</span></div>`).join('');
+ if(k=='p'){const sl=S.days*S.per;b=`<p>${S.days} days × ${S.per} periods = <b>${sl}</b> slots per class each week (lunch after period ${S.lunch}).</p><div class="sc"><table><tr><th>Group</th><th>Subjects (periods/week)</th><th>Used</th><th>Free / Activity</th></tr>${[1,2,3].map(l=>{const a=parse(l),u=a.reduce((x,y)=>x+y.p,0);return`<tr><td>${['Primary','Secondary','Senior Secondary'][l-1]}</td><td class="l">${a.map(x=>x.n+' '+x.p).join(' · ')}</td><td>${u}</td><td>${sl-u}</td></tr>`}).join('')}</table></div>`}
+ if(k=='s'){const T=S.tt;b=!T?`<p>Not generated yet.</p><button class="p" onclick="go('tt')">Go to Timetable →</button>`:`<p>${T.bad||T.miss.length?'⚠ Generated with warnings':'✔ Generated – no clashes'}</p><p>Classes scheduled: <b>${T.secs.length}</b> · Unplaced periods: <b>${T.bad}</b> · Subjects without a teacher: <b>${T.miss.length}</b> · Built in ${((T.ms||0)/1000).toFixed(1)}s</p>${T.miss.slice(0,8).map(x=>`<div class="w">${x}</div>`).join('')}<button class="p" onclick="go('tt')">View timetable →</button>`}
+ return`<div class="card" id="dd"><h2>${{t:'Teachers',c:'Classes & sections',p:'Periods per week',s:'Timetable status'}[k]}</h2>${b}</div>`}
+const pc=i=>`hsl(${i*47%360} 62% 48%)`;
+function chartCard(){return`<div class="card"><h2>Workload chart</h2><div class="row noprint"><label>Chart<select onchange="CH=this.value;$e('cb').innerHTML=chartBody()"><option value="bar" ${CH=='bar'?'selected':''}>Bar – periods per teacher</option><option value="pl" ${CH=='pl'?'selected':''}>Pie – load by grade group</option><option value="ps" ${CH=='ps'?'selected':''}>Pie – load by subject</option></select></label><label>Show (bar)<select onchange="CL=+this.value;$e('cb').innerHTML=chartBody()"><option value="0">All teachers</option>${[1,2,3].map(l=>`<option value="${l}" ${CL==l?'selected':''}>${['Primary','Secondary','Senior Secondary'][l-1]}</option>`).join('')}</select></label></div><div id="cb">${chartBody()}</div></div>`}
+function chartBody(){const T=S.tt;
+ if(CH=='bar'){const a=S.T.filter(t=>!CL||t.level==CL).sort((x,y)=>x.level-y.level||sc(y)-sc(x)),M=Math.max(30,...a.map(t=>t.max)),W=Math.max(520,a.length*24+60),H=240;
+  return`<div class="sc"><svg width="${W}" height="${H+60}" role="img">${[0,.5,1].map(f=>`<line x1="40" x2="${W}" y1="${10+H-H*f}" y2="${10+H-H*f}" style="stroke:var(--bd)"/><text x="34" y="${14+H-H*f}" text-anchor="end" font-size="10" style="fill:var(--mu)">${Math.round(M*f)}</text>`).join('')}
+  ${a.map((t,i)=>{const l=T.load[t.id]||0,x=46+i*24,h=H*l/M,u=l/t.max,c=u>=.9?'#dc2626':u>=.7?'#f59e0b':'#16a34a';return`<g><title>${rg(t)} ${t.name} (L${t.level}): ${l}/${t.max} periods</title><rect x="${x}" y="${10+H-H*t.max/M}" width="18" height="${H*t.max/M}" style="fill:var(--bd)"/><rect x="${x}" y="${10+H-h}" width="18" height="${h}" fill="${c}"/><text transform="translate(${x+13},${H+16}) rotate(60)" font-size="9" style="fill:var(--mu)">${rg(t).slice(-4)}</text></g>`}).join('')}</svg></div><small>Grey = weekly maximum · 🟩 under 70% · 🟨 70–90% · 🟥 over 90% · hover a bar for details</small>`}
+ const m={};if(CH=='pl')S.T.forEach(t=>{const k=['Primary','Secondary','Senior Secondary'][t.level-1];m[k]=(m[k]||0)+(T.load[t.id]||0)});else for(const k of T.secs)T.grid[k].forEach(r=>r.forEach(x=>{if(x.sub!='Activity')m[x.sub]=(m[x.sub]||0)+1}));
+ const d=Object.entries(m).filter(x=>x[1]>0),tot=d.reduce((a,b)=>a+b[1],0),R=100;if(!tot)return'<p>No data yet.</p>';let a0=-Math.PI/2;
+ const sl=d.map(([n,v],i)=>{const a1=a0+v/tot*2*Math.PI,p=[R*Math.cos(a0),R*Math.sin(a0),R*Math.cos(a1),R*Math.sin(a1)].map(z=>z.toFixed(2));a0=a1;return`<${v>=tot?`circle r="${R}"`:`path d="M0 0L${p[0]} ${p[1]}A${R} ${R} 0 ${v/tot>.5?1:0} 1 ${p[2]} ${p[3]}Z"`} fill="${pc(i)}"><title>${n}: ${v} periods (${Math.round(100*v/tot)}%)</title></${v>=tot?'circle':'path'}>`}).join('');
+ return`<div class="row" style="align-items:center"><svg width="240" height="240" viewBox="-120 -120 240 240">${sl}<circle r="55" style="fill:var(--cs)"/><text text-anchor="middle" y="4" font-size="13" style="fill:var(--tx)" font-weight="700">${tot}</text><text text-anchor="middle" y="20" font-size="9" style="fill:var(--mu)">periods</text></svg><div>${d.map(([n,v],i)=>`<div><span style="display:inline-block;width:11px;height:11px;border-radius:3px;background:${pc(i)};margin-right:6px"></span>${n}: <b>${v}</b> (${Math.round(100*v/tot)}%)</div>`).join('')}</div></div>`}
+function draw(){const lock=!S.user;document.body.classList.toggle('lock',lock);
+ if(lock){$e('m').innerHTML=authHTML();save();return}
+ $e('nav').innerHTML=[['home','🏠','Dashboard'],['setup','⚙️','1. Setup'],['teach','👩‍🏫','2. Teachers'],['tt','🗓️','3. Timetable']].map(([k,i,n])=>`<button class="${S.v==k?'on':''}" onclick="go('${k}')"><span>${i}</span>${n}</button>`).join('');
+ $e('lgs').innerHTML=LOGO;$e('lgf').innerHTML=LOGO.replace('width="40" height="40"','width="22" height="22"');
+ $e('pt').textContent=({home:'Dashboard',setup:'School Setup',teach:'Teachers',tt:'Timetable'})[S.v];
+ $e('um').innerHTML=`<span class="av">${S.user.name[0].toUpperCase()}</span><div><b>${S.user.name}</b><br><small>${S.user.via}</small></div><button onclick="logout()">⎋ Logout</button>`;
+ $e('m').innerHTML=S.v=='home'?vHome():S.v=='setup'?vSetup():S.v=='teach'?vTeach():vTT();save()}
+
+function vSetup(){
+ return`<div class="card"><h2>School week</h2><div class="row">
+ <label>Working days<select onchange="S.days=+this.value;S.tt=null">${[5,6].map(n=>`<option ${S.days==n?'selected':''}>${n}</option>`)}</select></label>
+ <label>Periods per day<input type="number" min="4" max="10" value="${S.per}" onchange="S.per=+this.value;S.tt=null"></label>
+ <label>Lunch after period<input type="number" min="0" max="9" value="${S.lunch}" onchange="S.lunch=+this.value;draw()"></label></div></div>
+ <div class="card"><h2>Sections per grade <small>(A, B, C… auto-named)</small></h2><div class="noprint" style="margin-bottom:8px">Import sections CSV (grade,sections): ${fbtn('s')}</div><div class="g">${Object.keys(S.secs).map(g=>`<label>Grade ${g} · L${L(g)}<input type="number" min="0" max="12" value="${S.secs[g]}" onchange="S.secs[${g}]=+this.value;S.tt=null"></label>`).join('')}</div></div>
+ <div class="card"><h2>Subjects &amp; periods per week <small>(one per line → Subject:periods)</small></h2><div class="g3">${[1,2,3].map(l=>`<div><b>${LN[l]}</b><textarea onchange="S.subs[${l}]=this.value;S.tt=null">${S.subs[l]}</textarea></div>`).join('')}</div></div>
+ <button class="p" onclick="go('teach')">Next: add teachers →</button>`}
+function vTeach(){
+ return`<div class="card"><h2>Add teacher</h2><div class="row">
+ <label>Name<input id="tn"></label><label>Level<select id="tl">${[1,2,3].map(l=>`<option value="${l}">${LN[l]}</option>`)}</select></label>
+ <label>Subjects (comma separated)<input id="ts" placeholder="Maths, Physics"></label>
+ <label>Designation<select id="td">${Object.keys(DS).map(d=>`<option>${d}</option>`)}</select></label>
+ <label>Experience (yrs)<input id="te" type="number" min="0" value="5" style="width:90px"></label>
+ <button class="p" onclick="addT()">Add</button></div></div>
+ <div class="card noprint"><h2>Bulk add / sample</h2><small>Lines: name, level(1-3), subject;subject, designation, years</small>
+ <textarea id="bk" style="min-height:70px" placeholder="Asha Rao, 2, Maths;Science, Senior Teacher, 12"></textarea>
+ <div class="row" style="margin-top:8px"><button onclick="bulk()">Import lines</button>${fbtn('t')}<button onclick="sample()">Load sample teachers</button><button onclick="if(confirm('Remove all teachers?')){S.T=[];S.nid=1;S.fn.t=0;S.tt=null;draw()}">Clear all</button></div></div>
+ <div class="card sc"><h2>Teachers (${S.T.length})</h2>${[1,2,3].map(l=>{const a=S.T.filter(t=>t.level==l);return`<h3>${LN[l]} <span class="lv">${a.length}</span></h3><table><tr><th>Reg No</th><th>Name</th><th>Subjects</th><th>Designation</th><th>Exp</th><th>Max/wk</th><th></th></tr>${a.map(t=>`<tr><td><b>${rg(t)}</b></td><td class="l">${t.name}</td><td class="l">${t.subs.join(', ')}</td><td>${t.des}</td><td>${t.exp}</td><td><input type="number" value="${t.max}" style="width:60px" onchange="S.T.find(x=>x.id==${t.id}).max=+this.value;S.tt=null"></td><td><button onclick="S.T=S.T.filter(x=>x.id!=${t.id});S.tt=null;draw()">✕</button></td></tr>`).join('')||'<tr><td colspan=7>None yet</td></tr>'}</table>`}).join('')}</div>
+ <button class="p" onclick="go('tt')">Next: generate →</button>`}
+function addT(){const n=tn.value.trim(),s=ts.value.split(',').map(x=>x.trim()).filter(Boolean);if(!n||!s.length)return alert('Enter a name and at least one subject');
+ S.T.push({id:S.nid++,name:n,level:+tl.value,subs:s,des:td.value,exp:+te.value||0,max:DM[td.value]});S.tt=null;draw();toast("Teacher added")}
+function bulk(){let c=0;bk.value.split('\n').forEach(l=>{const p=l.split(',').map(x=>x.trim());if(p.length<5||![1,2,3].includes(+p[1]))return;const d=DS[p[3]]?p[3]:'Teacher';
+ S.T.push({id:S.nid++,name:p[0],level:+p[1],subs:p[2].split(';').map(x=>x.trim()),des:d,exp:+p[4]||0,max:DM[d]});c++});S.tt=null;draw();if(!c)alert('No valid lines found')}
+const fbtn=k=>`<label class="btn">📂 Choose CSV<input type="file" accept=".csv,.txt" hidden onchange="loadF(this,'${k}')"></label><span class="ok">${S.fn[k]?'✔ '+S.fn[k]:'No file chosen'}</span>`;
+function loadF(el,k){const f=el.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const tx=r.result.replace(/\r/g,'').replace(/^\uFEFF/,'');let c=0;
+ if(k=='t'){S.T=[];S.nid=1;bk.value=tx;bulk();c=S.T.length}else tx.split('\n').forEach(l=>{const p=l.split(','),g=+p[0],n=+p[1];if(g>=1&&g<=12&&n>=0&&n<=12){S.secs[g]=n;c++}});
+ S.fn[k]=c?f.name+' — '+c+(k=='t'?' teachers':' grades')+' loaded':0;S.tt=null;draw();toast(c?'✔ '+S.fn[k]:'No valid rows in '+f.name,!c)};r.readAsText(f);el.value=''}
+function sample(){S.T=[];S.nid=1;S.fn.t=0;const nm='Anand Bhavana Chitra Dinesh Eswari Farah Gopal Hema Ilango Jaya Karthik Lakshmi Murali Nithya Omar Priya Qadir Revathi Suresh Uma Vijay Wasim Yamini Zoya'.split(' ');let k=0;
+ for(let l=1;l<=3;l++)for(const sb of parse(l)){let tot=0;for(let g=1;g<=12;g++)if(L(g)==l)tot+=S.secs[g]*sb.p;const n=Math.ceil(tot/23);
+ for(let i=0;i<n;i++){const d=i==0?'HOD':i<n/3?'Senior Teacher':'Teacher';S.T.push({id:S.nid++,name:nm[k++%24]+' ('+sb.n.slice(0,4)+')',level:l,subs:[sb.n],des:d,exp:Math.max(1,18-i*3),max:DM[d]})}}
+ S.tt=null;draw()}
+function check(){const w=[];if(!S.T.length)return['Add teachers first.'];
+ for(let l=1;l<=3;l++)for(const sb of parse(l)){let need=0,secs=0;for(let g=1;g<=12;g++)if(L(g)==l){need+=S.secs[g]*sb.p;secs+=S.secs[g]}
+ const tt=S.T.filter(t=>t.level==l&&t.subs.some(x=>x.toLowerCase()==sb.n.toLowerCase()));const have=tt.reduce((a,t)=>a+t.max,0);
+ if(have<need)w.push(`Level ${l} · ${sb.n}: needs ${need} periods/week, teachers cover only ${have} — add ${Math.ceil((need-have)/28)} more teacher(s).`)}
+ for(let l=1;l<=3;l++){const t=parse(l).reduce((a,b)=>a+b.p,0);if(t>S.days*S.per)w.push(`Level ${l}: ${t} periods/week exceed ${S.days*S.per} available slots.`)}return w}
+let BUSY=0;const sleep=(ms=0)=>new Promise(r=>setTimeout(r,ms)),$e=i=>document.getElementById(i);
+function ov(on,t,p,s){const o=$e('ov');o.style.display=on?'flex':'none';if(on){$e('ovt').textContent=t;$e('ovb').style.width=p+'%';$e('ovs').textContent=s||''}}
+function toast(m,bad){const e=$e('toast');e.textContent=m;e.className='show'+(bad?' bad':'');clearTimeout(toast.h);toast.h=setTimeout(()=>e.className='',3500)}
+function viewT(id){if(!id)return;S.selT=id;draw();$e('tc').scrollIntoView({behavior:'smooth'})}
+function viewC(k){S.sel=k;draw();$e('cc').scrollIntoView({behavior:'smooth'})}
+function repair(gr,u,busy,D,P){if(!u.t)return false;const K=(t,d,p)=>t+'|'+d+'|'+p;
+ for(let d=0;d<D;d++)for(let p=0;p<P;p++){const x=gr[d][p];if(!x||busy.has(K(u.t,d,p)))continue;
+  for(let d2=0;d2<D;d2++)for(let p2=0;p2<P;p2++){if(gr[d2][p2]||(x.t&&busy.has(K(x.t,d2,p2))))continue;
+   if(x.t){busy.delete(K(x.t,d,p));busy.add(K(x.t,d2,p2))}
+   gr[d2][p2]=x;gr[d][p]={sub:u.sub,t:u.t};busy.add(K(u.t,d,p));return true}}return false}
+async function generate(){
+ if(BUSY)return;const w=check();if(w.length&&!confirm('Capacity warnings:\n'+w.slice(0,3).join('\n')+'\n\nGenerate anyway?'))return;
+ BUSY=1;const t0=Date.now();
+ try{
+  const D=S.days,P=S.per,asg={},load={},miss=[];S.T.forEach(t=>load[t.id]=0);
+  ov(1,'Step 1 of 3 · Assigning teachers',4,'Matching level, subject, designation & experience');await sleep(600);
+  const secs=[];for(let g=12;g>=1;g--)for(let s=0;s<S.secs[g];s++)secs.push({g,s,k:g+'-'+s,l:L(g)});
+  if(!secs.length)throw new Error('No sections set – import or enter sections first');
+  const ranked=[...S.T].sort((a,b)=>sc(b)-sc(a));
+  for(const c of secs)for(const sb of parse(c.l)){const t=ranked.find(t=>t.level==c.l&&load[t.id]+sb.p<=t.max&&t.subs.some(x=>x.toLowerCase()==sb.n.toLowerCase()));
+   if(t)load[t.id]+=sb.p;else miss.push(`Grade ${c.g}${LET(c.s)} – ${sb.n}: no level ${c.l} teacher available`);(asg[c.k]=asg[c.k]||[]).push({sub:sb.n,t:t?t.id:null,p:sb.p})}
+  let best=null;const N=60;
+  for(let at=0;at<N&&(!best||best.bad);at++){
+   const order=[...secs];if(at)order.sort(()=>Math.random()-.5);const busy=new Set(),grid={};let bad=0;
+   for(let i=0;i<order.length;i++){const c=order[i],gr=Array.from({length:D},()=>Array(P).fill(null)),cnt={};
+    for(const u of [...asg[c.k]].sort((a,b)=>b.p-a.p))for(let k=0;k<u.p;k++){let bs=1e9,bp=null;
+     for(let d=0;d<D;d++)for(let p=0;p<P;p++){if(gr[d][p]||(u.t&&busy.has(u.t+'|'+d+'|'+p)))continue;
+      const x=(cnt[u.sub+d]||0)*100+(gr[d][p-1]&&gr[d][p-1].sub==u.sub?60:0)+(p>=P-2&&u.p>3?15:0)+Math.random()*(at?30:5)+p*(u.p>4?1:0);if(x<bs){bs=x;bp=[d,p]}}
+     if(!bp){if(!repair(gr,u,busy,D,P))bad++;continue}const[d,p]=bp;gr[d][p]={sub:u.sub,t:u.t};cnt[u.sub+d]=(cnt[u.sub+d]||0)+1;if(u.t)busy.add(u.t+'|'+d+'|'+p)}
+    gr.forEach(r=>r.forEach((x,j)=>{if(!x)r[j]={sub:'Activity',t:null}}));grid[c.k]=gr;
+    if(i%10==0){ov(1,'Step 2 of 3 · Building clash-free timetable',8+Math.round(84*(at+i/order.length)/N),`Attempt ${at+1} of up to ${N} · class ${i+1}/${order.length}`+(best?` · best so far: ${best.bad} unplaced`:''));await sleep()}}
+   if(!best||bad<best.bad)best={grid,bad}}
+  ov(1,'Step 3 of 3 · Finishing up',97,'Preparing your timetable views');await sleep(500);
+  S.tt={grid:best.grid,load,miss,bad:best.bad,secs:secs.map(c=>c.k),ms:Date.now()-t0};S.v='tt';if(!(S.sel in best.grid))S.sel='1-0';
+  ov(0);draw();const w2=best.bad||miss.length;toast(w2?'Generated with warnings – see details':'✔ Timetable generated – no clashes',w2)
+ }catch(e){ov(0);toast('Error: '+e.message,1);console.error(e)}finally{BUSY=0}}
+const tn_=id=>(S.T.find(t=>t.id==id)||{name:'—'}).name;
+function table(cell){let h='<div class="sc"><table><tr><th></th>';for(let p=0;p<S.per;p++){h+=`<th>P${p+1}</th>`+(S.lunch==p+1&&p<S.per-1?'<th>🍴</th>':'')}h+='</tr>';
+ for(let d=0;d<S.days;d++){h+=`<tr><th>${DAYS[d]}</th>`;for(let p=0;p<S.per;p++)h+=cell(d,p)+(S.lunch==p+1&&p<S.per-1?'<td>🍴</td>':'');h+='</tr>'}return h+'</table></div>'}
+function vTT(){
+ const w=check();let h=`<div class="card noprint"><h2>Generate</h2>${w.map(x=>`<div class="w">⚠ ${x}</div>`).join('')||'<div class="ok">✔ Teacher capacity looks sufficient for every subject.</div>'}
+ <div class="row" style="margin-top:10px"><button class="p" onclick="generate()">⚡ Generate timetable</button>${S.tt?'<button onclick="print()">🖨 Print</button><button onclick="csv()">⬇ CSV</button>':''}</div></div>`;
+ if(!S.tt)return h;const T=S.tt;
+ h+=`<div class="chips"><span class="chip">🏫 ${T.secs.length} classes</span><span class="chip">👩‍🏫 ${S.T.filter(t=>T.load[t.id]).length} teachers used</span><span class="chip">⏱ ${((T.ms||0)/1000).toFixed(1)}s</span></div><div class="card">${T.bad||T.miss.length?`<div class="w">⚠ ${T.bad} period(s) could not be placed. ${T.miss.length} subject(s) have no teacher.</div>${T.miss.slice(0,8).map(x=>`<div class="w">${x}</div>`).join('')}`:'<div class="ok">✔ Conflict-free timetable: no teacher double-booked, no level mixing.</div>'}</div>`;
+ h+=`<div class="card" id="cc"><h2>Class timetable</h2><label class="noprint">Class<select onchange="S.sel=this.value;draw()">${T.secs.map(k=>{const[g,s]=k.split('-');return`<option value="${k}" ${S.sel==k?'selected':''}>Grade ${g}${LET(+s)} (${cc_(g,+s)})</option>`}).join('')}</select></label><h3>Grade ${S.sel.split('-')[0]}${LET(+S.sel.split('-')[1])}</h3>
+ ${table((d,p)=>{const x=T.grid[S.sel][d][p];return`<td class="td" title="Click to open this teacher's timetable" onclick="viewT(${x.t||0})" style="background:${col(x.sub)}"><b>${x.sub}</b><i>${x.t?tn_(x.t):''}</i></td>`})}</div>`;
+ const t0=S.T.find(t=>t.id==S.selT)||S.T[0];
+ if(t0){const gr={};for(const k of T.secs)T.grid[k].forEach((r,d)=>r.forEach((x,p)=>{if(x.t==t0.id)gr[d+'|'+p]=k}));
+ h+=`<div class="card" id="tc"><h2>Teacher timetable</h2><label class="noprint">Teacher<select onchange="S.selT=+this.value;draw()">${S.T.map(t=>`<option value="${t.id}" ${t.id==t0.id?'selected':''}>${rg(t)} · ${t.name}</option>`)}</select></label><h3>${rg(t0)} · ${t0.name} · ${t0.des} · ${t0.exp} yrs</h3>
+ ${table((d,p)=>{const k=gr[d+'|'+p];if(!k)return'<td>—</td>';const[g,s]=k.split('-'),x=T.grid[k][d][p];return`<td class="td" title="Click to open this class" onclick="viewC('${k}')" style="background:${col(x.sub)}"><b>${g}${LET(+s)}</b><i>${x.sub}</i></td>`})}</div>`}
+ h+=chartCard()+`<div class="card sc"><h2>Teacher workload</h2><table><tr><th>Reg No</th><th>Teacher</th><th>Designation</th><th>Exp</th><th>Periods</th><th>Load</th></tr>${[...S.T].sort((a,b)=>a.level-b.level||sc(b)-sc(a)).map(t=>`<tr><td><b>${rg(t)}</b></td><td class="l">${t.name}</td><td>${t.des}</td><td>${t.exp}</td><td>${T.load[t.id]||0}/${t.max}</td><td><div class="bar"><div style="width:${Math.min(100,100*(T.load[t.id]||0)/t.max)}%"></div></div></td></tr>`).join('')}</table></div>`;return h}
+function csv(){const T=S.tt;let o='Class,Day,Period,Subject,Teacher\n';for(const k of T.secs){const[g,s]=k.split('-');T.grid[k].forEach((r,d)=>r.forEach((x,p)=>o+=`${g}${LET(+s)},${DAYS[d]},${p+1},${x.sub},"${x.t?tn_(x.t):''}"\n`))}
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([o],{type:'text/csv'}));a.download='bellweave-timetable.csv';a.click()}
+draw();
+</script></body></html>
